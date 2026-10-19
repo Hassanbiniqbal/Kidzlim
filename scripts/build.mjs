@@ -36,24 +36,37 @@ function cpuLimit() {
 }
 
 const memMb = Math.floor(memoryLimitBytes() / 2 ** 20)
-const cpus = Math.max(1, Math.min(cpuLimit(), Number(process.env.BUILD_MAX_CPUS || 4)))
-// Leave room for Turbopack's native memory and the OS; never more than 6 GB of JS heap.
-const heapMb = Number(process.env.BUILD_HEAP_MB) || Math.max(1024, Math.min(6144, Math.floor(memMb * 0.6)))
-const workers = memMb < 6000 ? 1 : Math.min(cpus, 2)
+// A huge reported machine with no visible container limit is a shared host (Hostinger reported
+// 64 CPUs / 500 GB): the real per-account limit is hidden, so assume a small slice.
+const shared = os.cpus().length > 16 && memMb > 64 * 1024
+const cpus = shared ? 1 : Math.max(1, Math.min(cpuLimit(), Number(process.env.BUILD_MAX_CPUS || 4)))
+const heapMb =
+  Number(process.env.BUILD_HEAP_MB) || (shared ? 2048 : Math.max(1024, Math.min(6144, Math.floor(memMb * 0.6))))
+const workers = shared || memMb < 6000 ? 1 : Math.min(cpus, 2)
+// Webpack by default: single-threaded JS whose memory the heap cap controls. Turbopack starts
+// native threads for every reported CPU and stalled on Hostinger. BUILD_BUNDLER=turbopack to opt in.
+const bundler = process.env.BUILD_BUNDLER === 'turbopack' ? 'turbopack' : 'webpack'
+const threads = String(Math.max(1, Math.min(cpus, 2)))
 
 console.log(
   `[build] machine: ${os.cpus().length} reported CPUs, limit ${cpuLimit()} · ${Math.round(os.totalmem() / 2 ** 20)} MB RAM, limit ${memMb} MB, free ${Math.round(os.freemem() / 2 ** 20)} MB`,
 )
-console.log(`[build] using heap ${heapMb} MB, ${workers} build worker(s), Node ${process.version}`)
+console.log(
+  `[build] ${shared ? 'shared host detected — ' : ''}using ${bundler}, heap ${heapMb} MB, ${workers} worker(s), ${threads} native thread(s), Node ${process.version}`,
+)
 
 const started = Date.now()
-const result = spawnSync('npx', ['next', 'build'], {
+const result = spawnSync('npx', ['next', 'build', `--${bundler}`], {
   stdio: 'inherit',
   shell: true,
   env: {
     ...process.env,
     NODE_OPTIONS: `--no-deprecation --max-old-space-size=${heapMb}`,
     NEXT_BUILD_WORKERS: String(workers),
+    // Cap native thread pools (SWC/Turbopack use Rayon and Tokio; libuv for fs/zlib).
+    RAYON_NUM_THREADS: threads,
+    TOKIO_WORKER_THREADS: threads,
+    UV_THREADPOOL_SIZE: '4',
     NEXT_TELEMETRY_DISABLED: '1',
   },
 })

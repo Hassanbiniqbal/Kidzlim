@@ -13,19 +13,16 @@ const nextConfig: NextConfig = {
   typescript: { ignoreBuildErrors: true },
   // scripts/build.mjs sets this from the build machine's real CPU/memory limits.
   ...(process.env.NEXT_BUILD_WORKERS ? { experimental: { cpus: Number(process.env.NEXT_BUILD_WORKERS) } } : {}),
-  // Runtime data, secrets and dev files must never be traced into the standalone build.
+  // Runtime data and secrets must never be traced into the standalone build. Keep these names
+  // distinctive: webpack matches them loosely (a './data/**' rule also dropped next's own
+  // dist/lib/metadata and broke the server).
   outputFileTracingExcludes: {
     '*': [
       './.env*',
-      './data/**',
       './deploy/**',
-      './media/**',
       './protected-media/**',
       './backups/**',
-      './tests/**',
-      './docs/**',
       './src/seed/assets/**',
-      './scripts/**',
     ],
   },
   images: {
