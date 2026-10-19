@@ -8,6 +8,11 @@ const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Type errors are caught by `npm run typecheck` (run before every push); skipping the check in
+  // `next build` keeps the build inside Hostinger's 15-minute / limited-memory build machine.
+  typescript: { ignoreBuildErrors: true },
+  // scripts/build.mjs sets this from the build machine's real CPU/memory limits.
+  ...(process.env.NEXT_BUILD_WORKERS ? { experimental: { cpus: Number(process.env.NEXT_BUILD_WORKERS) } } : {}),
   // Runtime data, secrets and dev files must never be traced into the standalone build.
   outputFileTracingExcludes: {
     '*': [

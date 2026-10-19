@@ -5,7 +5,7 @@
   "description": "Kidzlim e-commerce store — Islamic children's books (Gelato print-on-demand + digital PDF)",
   "type": "module",
   "scripts": {
-    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
+    "build": "node scripts/build.mjs",
     "postbuild": "node scripts/postbuild.mjs",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
