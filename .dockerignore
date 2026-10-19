@@ -1,0 +1,14 @@
+node_modules
+.next
+media
+.env
+.env.*
+!.env.example
+.git
+.vscode
+npm-debug.log*
+
+backups
+data
+deploy
+protected-media

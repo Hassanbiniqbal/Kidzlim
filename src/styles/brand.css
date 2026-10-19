@@ -1,0 +1,152 @@
+/*
+ * Kidzlim brand tokens — carried over from the original kidzlim.com Framer site.
+ * Dark-first: black canvas, #0a0a0a cards, green→cyan gradient headlines, lime CTAs.
+ */
+:root {
+  --k-bg: #000000;
+  --k-surface: #0a0a0a;
+  --k-surface-2: #171717;
+  --k-border: #262626;
+  --k-text: #e5e5e5;
+  --k-text-strong: #fafafa;
+  --k-text-muted: #a3a3a3;
+  --k-text-subtle: #737373;
+
+  --k-lime: #a7e742;
+  --k-lime-ink-from: #365314;
+  --k-lime-ink-to: #65a30d;
+  --k-green: #0ac94d;
+  --k-star: #ff7300;
+
+  --k-gradient-hero: linear-gradient(
+    304deg,
+    #03181c 10%,
+    #00c1e2 30%,
+    #76e35d 50%,
+    #70fa6b 70%,
+    #000000 97%
+  );
+  --k-gradient-heading: linear-gradient(
+    270deg,
+    #03181c -3%,
+    #00c1e2 11%,
+    #76e35d 50%,
+    #70fa6b 81%,
+    #000000 112%
+  );
+  --k-gradient-wordmark: linear-gradient(91deg, #a3a3a3 0%, rgba(0, 0, 0, 0) 130%);
+
+  --k-radius-card: 48px;
+  --k-radius-card-sm: 40px;
+  --k-radius-button: 14px;
+  --k-radius-pill: 38px;
+
+  --k-shadow-button:
+    rgba(255, 255, 255, 0.2) 0 0.42px 0 -1.42px inset,
+    rgba(255, 255, 255, 0.17) 0 1.6px 0 -2.83px inset,
+    rgba(255, 255, 255, 0.04) 0 7px 0 -4.25px inset,
+    rgba(0, 0, 0, 0.28) 0 -0.6px 0.06px -1.25px inset,
+    rgba(0, 0, 0, 0.25) 0 -2.29px 0.23px -2.5px inset,
+    rgba(0, 0, 0, 0.1) 0 -10px 1px -3.75px inset,
+    #ffffff 0 2px 15px 0 inset,
+    rgba(0, 0, 0, 0.15) 0 0.6px 2.29px -1px,
+    rgba(0, 0, 0, 0.14) 0 2.29px 8.7px -2px,
+    rgba(0, 0, 0, 0.1) 0 10px 38px -3px;
+
+  --k-font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+  --k-font-ui: var(--font-schibsted), 'Schibsted Grotesk', var(--k-font-sans);
+  --k-font-display: var(--font-bricolage), 'Bricolage Grotesque', var(--k-font-sans);
+  --k-font-wordmark: Futura, 'Trebuchet MS', var(--k-font-sans);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--k-bg);
+  color: var(--k-text);
+  font-family: var(--k-font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+.k-wrap {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.k-gradient-text {
+  background: var(--k-gradient-heading);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.k-card {
+  background: var(--k-surface);
+  border-radius: var(--k-radius-card);
+}
+
+.k-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 26px;
+  border-radius: var(--k-radius-button);
+  font-family: var(--k-font-ui);
+  font-weight: 500;
+  font-size: 15px;
+  transition: transform 0.2s ease;
+}
+
+.k-btn:hover {
+  transform: translateY(-1px);
+}
+
+.k-btn--lime {
+  background: var(--k-lime);
+  box-shadow: var(--k-shadow-button);
+}
+
+.k-btn--lime > span {
+  background: linear-gradient(var(--k-lime-ink-from) -87%, var(--k-lime-ink-to) 188%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.k-btn--ghost {
+  border: 1px solid var(--k-border);
+  border-radius: var(--k-radius-pill);
+  color: var(--k-text-strong);
+  background: rgba(10, 10, 10, 0.9);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

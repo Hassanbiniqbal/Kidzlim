@@ -1,0 +1,57 @@
+{
+  "name": "kidzlim-store",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kidzlim e-commerce store — Islamic children's books (Gelato print-on-demand + digital PDF)",
+  "type": "module",
+  "scripts": {
+    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build",
+    "postbuild": "node scripts/postbuild.mjs",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "lint": "cross-env NODE_OPTIONS=--no-deprecation eslint .",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "typecheck": "tsc --noEmit",
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts",
+    "seed:hostinger": "cross-env NODE_ENV=production SEED_BOOKS=1 DATABASE_URL=file:./deploy/data/kidzlim.db MEDIA_DIR=./deploy/data/media PROTECTED_MEDIA_DIR=./deploy/data/protected-media JOBS_AUTORUN=0 NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts",
+    "migrate:create": "node scripts/migrate-create.mjs",
+    "package:hostinger": "node scripts/package-hostinger.mjs",
+    "seed:books": "cross-env SEED_BOOKS=1 NODE_OPTIONS=--no-deprecation payload run src/seed/index.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@payloadcms/db-postgres": "3.90.2",
+    "@payloadcms/db-sqlite": "3.90.2",
+    "@payloadcms/next": "3.90.2",
+    "@payloadcms/richtext-lexical": "3.90.2",
+    "@payloadcms/ui": "3.90.2",
+    "cross-env": "^7.0.3",
+    "graphql": "^16.8.1",
+    "next": "16.3.3",
+    "payload": "3.90.2",
+    "pdf-lib": "1.17.1",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "server-only": "^0.0.1",
+    "sharp": "0.35.4",
+    "stripe": "22.6.2",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@types/node": "22.19.9",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "eslint": "^9.16.0",
+    "eslint-config-next": "16.3.3",
+    "prettier": "^3.4.2",
+    "typescript": "5.7.3",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}
