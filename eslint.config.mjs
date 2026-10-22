@@ -32,6 +32,7 @@ export default defineConfig([
     'src/payload-types.ts',
     'src/payload-generated-schema.ts',
     'src/migrations/**', 'src/migrations-sqlite/**',
+    'ecosystem.config.cjs', // PM2 only reads CommonJS
     'src/app/(payload)/**',
   ]),
 ])

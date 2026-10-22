@@ -7,6 +7,7 @@ Gelato print-on-demand and digital PDF downloads, Stripe payments, Brevo email.
 
 **Hosting — two supported routes:**
 - **Hostinger Node.js hosting** (Business / Cloud plans) with a SQLite file → see **`HOSTINGER.md`**.
+- **Hostinger VPS with CloudPanel** (Node.js site + PM2, SQLite) → see **`VPS.md`** (recommended for a VPS).
 - **Docker Compose on a VPS** with PostgreSQL behind Nginx → see *Deploying to the VPS* below.
 
 The database is picked from `DATABASE_URL`: `file:/path/kidzlim.db` → SQLite,
