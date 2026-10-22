@@ -22,20 +22,20 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@payloadcms/db-postgres": "3.90.2",
-    "@payloadcms/db-sqlite": "3.90.2",
-    "@payloadcms/next": "3.90.2",
-    "@payloadcms/richtext-lexical": "3.90.2",
-    "@payloadcms/ui": "3.90.2",
+    "@payloadcms/db-postgres": "3.91.0",
+    "@payloadcms/db-sqlite": "3.91.0",
+    "@payloadcms/next": "3.91.0",
+    "@payloadcms/richtext-lexical": "3.91.0",
+    "@payloadcms/ui": "3.91.0",
     "cross-env": "^7.0.3",
     "graphql": "^16.8.1",
-    "next": "16.3.3",
-    "payload": "3.90.2",
+    "next": "16.3.8",
+    "payload": "3.91.0",
     "pdf-lib": "1.17.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "server-only": "^0.0.1",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "stripe": "22.6.2",
     "zod": "^3.25.76"
   },
@@ -45,11 +45,12 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "eslint": "^9.16.0",
-    "eslint-config-next": "16.3.3",
+    "eslint-config-next": "16.3.8",
     "prettier": "^3.4.2",
     "typescript": "5.7.3",
+    "vite": "^7.3.7",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.2.4"
+    "vitest": "5.0.5"
   },
   "engines": {
     "node": ">=20.9.0"

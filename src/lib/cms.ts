@@ -1,7 +1,7 @@
 import 'server-only'
 
 import config from '@payload-config'
-import { getPayload } from 'payload'
+import { getPayload, type Where } from 'payload'
 import { cache } from 'react'
 
 import type { Book, Page, Series } from '@/payload-types'
@@ -45,7 +45,7 @@ export const getBookBySlug = cache(async (slug: string): Promise<Book | null> =>
 
 type BookQuery =
   | { source: 'featured' | 'latest'; limit: number }
-  | { source: 'all'; seriesId?: number }
+  | { source: 'all'; seriesId?: number; search?: string }
   | { source: 'ids'; ids: number[] }
 
 export async function getBooks(query: BookQuery): Promise<Book[]> {
@@ -64,14 +64,17 @@ export async function getBooks(query: BookQuery): Promise<Book[]> {
     return query.ids.map((id) => docs.find((d) => d.id === id)).filter((d): d is Book => Boolean(d))
   }
 
+  const and: Where[] = []
+  if (query.source === 'featured') and.push({ featured: { equals: true } })
+  if (query.source === 'all' && query.seriesId) and.push({ series: { equals: query.seriesId } })
+  // Search: every word must appear in the title (case-insensitive `like`).
+  if (query.source === 'all' && query.search) {
+    for (const word of query.search.split(/\s+/).filter(Boolean).slice(0, 6)) and.push({ title: { like: word } })
+  }
+
   const { docs } = await payload.find({
     collection: 'books',
-    where:
-      query.source === 'featured'
-        ? { featured: { equals: true } }
-        : query.source === 'all' && query.seriesId
-          ? { series: { equals: query.seriesId } }
-          : undefined,
+    where: and.length ? { and } : undefined,
     sort: query.source === 'all' ? 'title' : '-createdAt',
     limit: query.source === 'all' ? 500 : query.limit,
     depth: 1,

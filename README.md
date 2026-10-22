@@ -207,6 +207,28 @@ old key. Losing the key means re-entering the API keys — back it up separately
 **Run one app container.** The order lock and job runner work inside one Node process.
 
 
+## Security
+
+- **Admin accounts:** only admins create users; the first user becomes admin; staff can't change
+  their own role. Passwords need 12+ characters; 5 wrong attempts lock an account for 15 minutes;
+  sessions last 8 hours; the login cookie is HttpOnly, Secure (in production) and SameSite=Lax.
+- **Payments & webhooks:** Stripe events are signature-verified and processed once; Gelato
+  webhooks and the cron endpoint need their shared secrets (constant-time compare).
+- **Files:** book PDFs live outside the web root and are only served through expiring,
+  per-order download links (stamped with the buyer's email) or signed print links for Gelato.
+  Image uploads accept JPEG/PNG/WebP/GIF/AVIF only (no SVG); uploads are capped at 250 MB.
+- **Abuse limits:** every public endpoint is rate-limited by the visitor's real IP (read from the
+  right of `X-Forwarded-For`, so it can't be forged — set `TRUSTED_PROXY_HOPS` to the number of
+  proxies in front of the app). All input is validated with Zod.
+- **Headers:** Content-Security-Policy (scripts only from this site; the admin may also load its
+  code editor from jsDelivr), HSTS in production, no framing by other sites, nosniff, a strict
+  referrer policy, and no `X-Powered-By`. GraphQL is disabled (unused).
+- **Secrets:** API keys are AES-256-GCM encrypted in the database and never shown again.
+
+`npm audit` still lists issues in build/CLI tooling bundled with Payload (`braces`/`sass`, and
+`esbuild` inside `drizzle-kit`); none of it handles web requests and no patched releases exist
+yet — re-run `npm audit` and update Payload when they do.
+
 ## Tests
 
 ```bash

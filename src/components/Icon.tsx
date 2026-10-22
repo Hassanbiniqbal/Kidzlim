@@ -3,7 +3,22 @@ import React from 'react'
 import type { FeatureIcon } from '@/blocks'
 
 // Stroke icons (Lucide-style, 24×24) so they inherit currentColor.
-type UiIcon = 'arrow' | 'facebook' | 'instagram' | 'youtube' | 'tiktok' | 'menu' | 'close' | 'bag' | 'trash' | 'truck'
+type UiIcon =
+  | 'arrow'
+  | 'facebook'
+  | 'instagram'
+  | 'youtube'
+  | 'tiktok'
+  | 'menu'
+  | 'close'
+  | 'bag'
+  | 'trash'
+  | 'truck'
+  | 'search'
+  | 'plus'
+  | 'check'
+  | 'chevronLeft'
+  | 'chevronRight'
 
 const PATHS: Record<FeatureIcon | UiIcon, string> =
   {
@@ -25,6 +40,11 @@ const PATHS: Record<FeatureIcon | UiIcon, string> =
     shield: 'M20 13c0 5-3.5 7.5-7.7 9a1 1 0 0 1-.6 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.2-2.7a1.2 1.2 0 0 1 1.6 0C14.5 3.8 17 5 19 5a1 1 0 0 1 1 1zM9 12l2 2 4-4',
     leaf: 'M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10M2 21c0-3 1.9-5.4 5.1-6',
     arrow: 'M5 12h14M12 5l7 7-7 7',
+    search: 'M11 19a8 8 0 1 0 0-16 8 8 0 0 0 0 16M21 21l-4.3-4.3',
+    plus: 'M12 5v14M5 12h14',
+    check: 'M20 6 9 17l-5-5',
+    chevronLeft: 'm15 18-6-6 6-6',
+    chevronRight: 'm9 18 6-6-6-6',
     menu: 'M4 6h16M4 12h16M4 18h16',
     close: 'M18 6 6 18M6 6l12 12',
     facebook: 'M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z',

@@ -6,11 +6,24 @@ import { CartLink } from './cart/CartLink'
 import { Icon } from './Icon'
 
 export const NAV_LINKS = [
+  { href: '/', label: 'Home' },
   { href: '/books', label: 'Books' },
-  { href: '/#themes', label: 'Themes' },
+  { href: '/#series', label: 'Series' },
   { href: '/about', label: 'About' },
-  { href: '/#faq', label: 'FAQ' },
 ]
+
+/** Plain GET form to /books?q=… — works without JavaScript. */
+function SearchForm({ id }: { id: string }) {
+  return (
+    <form action="/books" method="get" role="search" className="k-search">
+      <label htmlFor={id} className="k-visually-hidden">
+        Search books
+      </label>
+      <Icon name="search" size={16} className="k-search__icon" />
+      <input id={id} name="q" type="search" placeholder="Search books" autoComplete="off" maxLength={80} />
+    </form>
+  )
+}
 
 export function SiteHeader() {
   return (
@@ -30,9 +43,9 @@ export function SiteHeader() {
         </nav>
 
         <div className="k-nav__actions">
-          <Link href="/books" className="k-btn k-btn--ghost k-nav__cta">
-            Shop Books
-          </Link>
+          <div className="k-nav__search">
+            <SearchForm id="site-search" />
+          </div>
           <CartLink />
         </div>
 
@@ -42,6 +55,7 @@ export function SiteHeader() {
             <Icon name="menu" size={22} />
           </summary>
           <nav aria-label="Mobile" className="k-nav__sheet">
+            <SearchForm id="site-search-mobile" />
             {NAV_LINKS.map((l) => (
               <Link key={l.href} href={l.href}>
                 {l.label}

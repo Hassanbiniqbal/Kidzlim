@@ -64,7 +64,7 @@ export default async function BookPage({ params }: Props) {
 
   return (
     <article className="k-wrap k-book">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
 
       <nav aria-label="Breadcrumb" className="k-breadcrumb">
         <Link href="/books">Books</Link> <span aria-hidden="true">/</span>{' '}

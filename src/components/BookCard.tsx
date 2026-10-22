@@ -26,6 +26,7 @@ export function BookCard({ book }: { book: Book }) {
         ) : (
           <span className="k-book-card__placeholder">{book.title}</span>
         )}
+        <span className="k-book-card__shine" aria-hidden="true" />
       </div>
       <div className="k-book-card__body">
         {(series || book.ageRange) && (
@@ -43,15 +44,22 @@ export function BookCard({ book }: { book: Book }) {
   )
 }
 
-export function BookGrid({ books, emptyText }: { books: Book[]; emptyText?: string }) {
+/** `reveal`: cards fade up in a staggered wave as they scroll into view (with RevealObserver). */
+export function BookGrid({ books, emptyText, reveal = false }: { books: Book[]; emptyText?: string; reveal?: boolean }) {
   if (books.length === 0) {
     return <p className="k-empty">{emptyText ?? 'New titles are on their way, in shā’ Allāh. Check back soon.'}</p>
   }
   return (
     <div className="k-book-grid">
-      {books.map((book) => (
-        <BookCard key={book.id} book={book} />
-      ))}
+      {books.map((book, i) =>
+        reveal ? (
+          <div key={book.id} className="k-book-grid__cell" data-reveal style={{ '--i': i % 4 } as React.CSSProperties}>
+            <BookCard book={book} />
+          </div>
+        ) : (
+          <BookCard key={book.id} book={book} />
+        ),
+      )}
     </div>
   )
 }

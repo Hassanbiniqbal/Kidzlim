@@ -8,6 +8,8 @@ const dirname = path.dirname(__filename)
 
 const nextConfig: NextConfig = {
   output: 'standalone',
+  // Don't advertise the stack (removes both Next's and Payload's X-Powered-By header).
+  poweredByHeader: false,
   // Type errors are caught by `npm run typecheck` (run before every push); skipping the check in
   // `next build` keeps the build inside Hostinger's 15-minute / limited-memory build machine.
   typescript: { ignoreBuildErrors: true },
@@ -39,12 +41,39 @@ const nextConfig: NextConfig = {
         ? [{ key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' }]
         : []),
     ]
+    // Content-Security-Policy. Scripts may only come from this site (Next's inline bootstrap needs
+    // 'unsafe-inline'); no plugins, no framing by other sites, forms only post here. The admin
+    // additionally loads its code editor (Monaco) from jsDelivr. Dev adds eval + websockets for HMR.
+    const dev = process.env.NODE_ENV !== 'production'
+    const csp = (extra: { script?: string; style?: string; font?: string; worker?: string } = {}) =>
+      [
+        "default-src 'self'",
+        `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ''}${extra.script ? ` ${extra.script}` : ''}`,
+        `style-src 'self' 'unsafe-inline'${extra.style ? ` ${extra.style}` : ''}`,
+        "img-src 'self' data: blob:",
+        `font-src 'self' data:${extra.font ? ` ${extra.font}` : ''}`,
+        `connect-src 'self'${dev ? ' ws: wss:' : ''}${extra.script ? ` ${extra.script}` : ''}`,
+        `worker-src 'self' blob:${extra.worker ? ` ${extra.worker}` : ''}`,
+        "frame-ancestors 'self'",
+        "base-uri 'self'",
+        "object-src 'none'",
+        "form-action 'self'",
+        ...(dev ? [] : ['upgrade-insecure-requests']),
+      ].join('; ')
+    const jsdelivr = 'https://cdn.jsdelivr.net'
     const privatePage = [
       { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
       { key: 'Cache-Control', value: 'private, no-store' },
     ]
     return [
       { source: '/:path*', headers: security },
+      // Storefront and APIs: strict CSP. Admin: same, plus the CDN for its code editor.
+      { source: '/((?!admin).*)', headers: [{ key: 'Content-Security-Policy', value: csp() }] },
+      {
+        source: '/admin/:path*',
+        headers: [{ key: 'Content-Security-Policy', value: csp({ script: jsdelivr, style: jsdelivr, font: jsdelivr, worker: jsdelivr }) }],
+      },
+      { source: '/admin', headers: [{ key: 'Content-Security-Policy', value: csp({ script: jsdelivr, style: jsdelivr, font: jsdelivr, worker: jsdelivr }) }] },
       // Personal pages and file links: never cached by proxies, never indexed.
       { source: '/download/:path*', headers: privatePage },
       { source: '/downloads/:path*', headers: privatePage },

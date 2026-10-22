@@ -53,6 +53,9 @@ export default buildConfig({
   admin: {
     user: Users.slug,
     theme: 'dark',
+    // Built-in avatar instead of Gravatar: no third-party image requests (allowed by the CSP) and
+    // admins' email hashes aren't sent to Gravatar.
+    avatar: 'default',
     importMap: {
       baseDir: path.resolve(dirname),
     },
@@ -86,6 +89,11 @@ export default buildConfig({
     }),
   },
   editor: lexicalEditor(),
+  // The admin and storefront use the REST/Local API only; an unused GraphQL endpoint is just
+  // extra attack surface (expensive nested queries, schema introspection).
+  graphQL: { disable: true },
+  // Hard cap per upload (print-ready PDFs are the largest files). Images are far smaller.
+  upload: { limits: { fileSize: 250 * 1024 * 1024 } },
   secret: env.PAYLOAD_SECRET,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),

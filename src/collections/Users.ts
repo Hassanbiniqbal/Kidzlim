@@ -1,4 +1,4 @@
-import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
+import { type CollectionBeforeChangeHook, type CollectionBeforeValidateHook, type CollectionConfig, ValidationError } from 'payload'
 
 import { hasRole, isAdmin, isAdminOrSelf, ROLES } from '../access/roles'
 import { collectionAuditHooks } from '../lib/audit'
@@ -8,6 +8,20 @@ const audit = collectionAuditHooks({
   label: (d) => String(d.email ?? d.id),
   ignore: ['hash', 'salt', 'password', 'resetPasswordToken', 'resetPasswordExpiration', 'loginAttempts', 'lockUntil', 'sessions'],
 })
+
+export const MIN_PASSWORD_LENGTH = 12
+
+/** Admin/staff passwords must be at least 12 characters (checked whenever one is set). */
+export const requireStrongPassword: CollectionBeforeValidateHook = ({ data }) => {
+  const password = (data as { password?: unknown } | undefined)?.password
+  if (typeof password === 'string' && password.length < MIN_PASSWORD_LENGTH) {
+    throw new ValidationError({
+      collection: 'users',
+      errors: [{ path: 'password', message: `Use at least ${MIN_PASSWORD_LENGTH} characters — a short phrase is easiest to remember.` }],
+    })
+  }
+  return data
+}
 
 /**
  * Role assignment guard:
@@ -33,7 +47,18 @@ export const Users: CollectionConfig = {
     defaultColumns: ['email', 'name', 'role'],
     group: 'Admin',
   },
-  auth: true,
+  auth: {
+    // Brute-force protection: 5 wrong passwords lock the account for 15 minutes.
+    maxLoginAttempts: 5,
+    lockTime: 15 * 60 * 1000,
+    // Admin sessions last a working day.
+    tokenExpiration: 8 * 60 * 60,
+    cookies: {
+      // HTTPS-only cookie in production; Lax blocks it on cross-site POSTs (CSRF).
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Lax',
+    },
+  },
   access: {
     create: isAdmin,
     read: isAdminOrSelf,
@@ -41,6 +66,7 @@ export const Users: CollectionConfig = {
     delete: isAdmin,
   },
   hooks: {
+    beforeValidate: [requireStrongPassword],
     beforeChange: [enforceRole],
     afterChange: [audit.afterChange],
     afterDelete: [audit.afterDelete],

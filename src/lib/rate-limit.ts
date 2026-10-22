@@ -16,8 +16,17 @@ export function rateLimit(key: string, limit: number, windowMs: number): { ok: b
   return { ok: bucket.count <= limit, retryAfterSec: Math.ceil((bucket.resetAt - now) / 1000) }
 }
 
+/**
+ * The visitor's IP for rate limiting. X-Forwarded-For is a list the client can pre-fill, so the
+ * FIRST entry is attacker-controlled; each trusted proxy (Hostinger/LiteSpeed, or Nginx on a VPS)
+ * appends the address it received the request from. So we read from the RIGHT, skipping
+ * TRUSTED_PROXY_HOPS - 1 entries (default 1 proxy in front of the app).
+ */
 export function clientIp(req: Request): string {
-  return (
-    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown'
-  )
+  const hops = Math.max(1, Number(process.env.TRUSTED_PROXY_HOPS) || 1)
+  const chain = (req.headers.get('x-forwarded-for') ?? '')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
+  return chain[chain.length - hops] || req.headers.get('x-real-ip') || 'unknown'
 }

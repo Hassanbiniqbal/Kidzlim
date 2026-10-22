@@ -12,6 +12,10 @@ const inter = Inter({ subsets: ['latin'], weight: ['400', '600', '700'], variabl
 const schibsted = Schibsted_Grotesk({ subsets: ['latin'], weight: ['500'], variable: '--font-schibsted' })
 const bricolage = Bricolage_Grotesque({ subsets: ['latin'], variable: '--font-bricolage' })
 
+// Every page renders per request: the footer (and most pages) read the CMS, and the build must
+// never open the database — on Hostinger it doesn't exist at build time.
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'),
   title: {
